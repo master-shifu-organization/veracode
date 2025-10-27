@@ -179,3 +179,8 @@ jobs:
           repo_name: ${{ inputs.repo }}
           github-token: ${{ inputs.token }}
           commitHash: ${{ inputs.sha }}
+
+      - name: Cleanup workspace and Docker
+        run: |
+          echo "Running final cleanup..."
+          sudo rm -rf $GITHUB_WORKSPACE/
