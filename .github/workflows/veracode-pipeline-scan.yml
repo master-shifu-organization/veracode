@@ -194,7 +194,7 @@ jobs:
                 -d @"payload.txt"
             done
       
-     - name: Cleanup workspace and Docker
-       run: |
-          echo "Running final cleanup..."
-          sudo rm -rf $GITHUB_WORKSPACE/
+     # - name: Cleanup workspace and Docker
+     #   run: |
+     #      echo "Running final cleanup..."
+     #      sudo rm -rf $GITHUB_WORKSPACE/
