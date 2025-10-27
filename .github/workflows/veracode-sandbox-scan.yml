@@ -72,19 +72,8 @@ jobs:
       #   run: |
       #     echo "Running final cleanup..."
       #     sudo rm -rf $GITHUB_WORKSPACE/
-      - name: Print workspace folders before deletion
-        run: |
-          echo "Listing contents of GITHUB_WORKSPACE:"
-          echo "$GITHUB_WORKSPACE/ contents"
-          ls -al "$GITHUB_WORKSPACE/"
-
-      - name: Cleanup CLI folder
+      - name: cleanup job
         if: always()
         run: |
-          if [ -d "$GITHUB_WORKSPACE/" ]; then
-            echo "$GITHUB_WORKSPACE/"
-            rm -rf "$GITHUB_WORKSPACE/"
-            echo "$GITHUB_WORKSPACE/ removed successfully"
-          else
-            echo "$GITHUB_WORKSPACE/ not found, skipping cleanup"
-          fi
+          echo "Running cleanup..."
+          sudo rm -rf $GITHUB_WORKSPACE/
