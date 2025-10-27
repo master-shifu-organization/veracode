@@ -164,37 +164,54 @@ jobs:
     needs: pipeline_scan
     if: always()
     steps:
-     - name: Update check
-       id: update_check_status
-       shell: bash
-       env:
-        BREAK_BUILD_ON_ERROR: ${{ inputs.break_build_on_error }}
-        BREAK_BUILD_ON_POLICY: ${{ inputs.break_build_policy_findings }}
-       run: |
-            success_count=0
-            conclusion="failure"
-            # Convert JSON string to a proper format for jq processing
-            echo '${{ toJSON(needs) }}' | jq -c 'to_entries[]' | while read -r job; do
-              status=$(echo "$job" | jq -r '.value.result')
-              echo "$status"
-              if [ "$status" = "success" ]; then
-                success_count=$((success_count + 1))
+      - name: Update check
+        id: update_check_status
+        shell: bash
+        env:
+          BREAK_BUILD_ON_ERROR: ${{ inputs.break_build_on_error }}
+          BREAK_BUILD_ON_POLICY: ${{ inputs.break_build_policy_findings }}
+        run: |
+          success_count=0
+          conclusion="failure"
+          # Convert JSON string to a proper format for jq processing
+          echo '${{ toJSON(needs) }}' | jq -c 'to_entries[]' | while read -r job; do
+            status=$(echo "$job" | jq -r '.value.result')
+            echo "$status"
+            if [ "$status" = "success" ]; then
+              success_count=$((success_count + 1))
+              echo '{"status": "completed", "conclusion": "success"}' > payload.txt
+            elif [ "$status" = "failure" ]; then
+              if [ "$BREAK_BUILD_ON_ERROR" = "false" && "$BREAK_BUILD_ON_POLICY" = "false" ]; then
                 echo '{"status": "completed", "conclusion": "success"}' > payload.txt
-              elif [ "$status" = "failure" ]; then
-                if [ "$BREAK_BUILD_ON_ERROR" = "false" && "$BREAK_BUILD_ON_POLICY" = "false" ]; then
-                  echo '{"status": "completed", "conclusion": "success"}' > payload.txt
-                else
-                  echo '{"status": "completed", "conclusion": "failure"}' > payload.txt
-                fi
+              else
+                echo '{"status": "completed", "conclusion": "failure"}' > payload.txt
               fi
-              curl -X PATCH \
-                -H "Authorization: Bearer ${{ inputs.token }}" \
-                -H "Accept: application/vnd.github+json" \
-                https://api.github.com/repos/${{ inputs.owner }}/${{ inputs.repo }}/check-runs/${{ inputs.check_run_id }} \
-                -d @"payload.txt"
-            done
+            fi
+            curl -X PATCH \
+              -H "Authorization: Bearer ${{ inputs.token }}" \
+              -H "Accept: application/vnd.github+json" \
+              https://api.github.com/repos/${{ inputs.owner }}/${{ inputs.repo }}/check-runs/${{ inputs.check_run_id }} \
+              -d @"payload.txt"
+          done
       
-     # - name: Cleanup workspace and Docker
-     #   run: |
-     #      echo "Running final cleanup..."
-     #      sudo rm -rf $GITHUB_WORKSPACE/
+      # - name: Cleanup workspace and Docker
+      #   run: |
+      #      echo "Running final cleanup..."
+      #      sudo rm -rf $GITHUB_WORKSPACE/
+     
+      - name: Print workspace folders before deletion
+        run: |
+          echo "Listing contents of GITHUB_WORKSPACE:"
+          echo "$GITHUB_WORKSPACE/ contents"
+          ls -al "$GITHUB_WORKSPACE/"
+
+      - name: Cleanup CLI folder
+        if: always()
+        run: |
+          if [ -d "$GITHUB_WORKSPACE/" ]; then
+            echo "$GITHUB_WORKSPACE/"
+            rm -rf "$GITHUB_WORKSPACE/"
+            echo "$GITHUB_WORKSPACE/ removed successfully"
+          else
+            echo "$GITHUB_WORKSPACE/ not found, skipping cleanup"
+          fi
