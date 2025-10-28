@@ -72,8 +72,8 @@ jobs:
       #   run: |
       #     echo "Running final cleanup..."
       #     sudo rm -rf $GITHUB_WORKSPACE/
-      - name: cleanup job
-        if: always()
-        run: |
-          echo "Running cleanup..."
-          sudo rm -rf $GITHUB_WORKSPACE/
+      # - name: cleanup job
+      #   if: always()
+      #   run: |
+      #     echo "Running cleanup..."
+      #     sudo rm -rf $GITHUB_WORKSPACE/
