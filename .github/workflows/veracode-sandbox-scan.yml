@@ -68,10 +68,10 @@ jobs:
           gitRepositoryUrl: ${{ github.server_url }}/${{ github.event.client_payload.repository.full_name }}
           deleteincompletescan: true
 
-      # - name: Cleanup workspace and Docker
-      #   run: |
-      #     echo "Running final cleanup..."
-      #     sudo rm -rf $GITHUB_WORKSPACE/
+      - name: Cleanup workspace and Docker
+        run: |
+          echo "Running final cleanup..."
+          sudo rm -rf $GITHUB_WORKSPACE/
       # - name: cleanup job
       #   if: always()
       #   run: |
