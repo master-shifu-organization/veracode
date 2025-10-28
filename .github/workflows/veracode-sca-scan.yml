@@ -89,10 +89,10 @@ jobs:
           recursive: true
           allow-dirty: true
 
-      - name: Cleanup workspace and Docker
-        run: |
-          echo "Running final cleanup..."
-          sudo rm -rf $GITHUB_WORKSPACE/
+      # - name: Cleanup workspace and Docker
+      #   run: |
+      #     echo "Running final cleanup..."
+      #     sudo rm -rf $GITHUB_WORKSPACE/
 
   cleanup:
     runs-on: ${{ fromJson(github.event.client_payload.user_config.default_runs_on) }}
