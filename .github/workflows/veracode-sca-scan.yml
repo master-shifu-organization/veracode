@@ -100,6 +100,7 @@ jobs:
   #   needs: [register, veracode-sca-scan]
   #   steps:
       - name: Cleanup workspace and Docker
+        if: always()
         run: |
           echo "Running final cleanup..."
           sudo rm -rf $GITHUB_WORKSPACE/
