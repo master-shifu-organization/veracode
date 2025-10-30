@@ -194,11 +194,6 @@ jobs:
               -d @"payload.txt"
           done
 
-  cleanup:
-    runs-on: ${{ fromJson(inputs.default_runs_on) }}
-    if: always()
-    needs: [pipeline_scan]
-    steps:
       - name: Cleanup workspace
         run: |
           echo "Running final cleanup..."
